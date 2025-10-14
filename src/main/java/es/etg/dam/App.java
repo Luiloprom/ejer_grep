@@ -20,12 +20,25 @@ public class App {
 
     public static void main(String[] args) throws Exception {
 
-        Process p = Runtime.getRuntime().exec(COMANDO);
+        Process p = lanzarProceso(COMANDO);
+        escribir(p, CONTENIDO);
+        leer(p);
+        p.waitFor();
+
+    }
+
+    public static Process lanzarProceso(String comando) throws Exception {
+        return Runtime.getRuntime().exec(comando);
+    }
+
+    public static void escribir(Process p, String contenido) throws Exception {
         OutputStream out = p.getOutputStream();
         PrintWriter pw = new PrintWriter(new OutputStreamWriter(out));
-        pw.println(CONTENIDO);
+        pw.println(contenido);
         pw.close();
+    }
 
+    public static void leer(Process p) throws Exception {
         BufferedReader br = new BufferedReader(new InputStreamReader(p.getInputStream()));
         String linea;
         System.out.println(RESULTADO);
@@ -33,7 +46,5 @@ public class App {
             System.out.println(linea);
         }
         br.close();
-
-        p.waitFor();
     }
 }
