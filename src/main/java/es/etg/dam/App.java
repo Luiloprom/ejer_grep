@@ -16,13 +16,13 @@ public class App {
             PSP es programacion.""";
 
     public static final String COMANDO = "grep PSP";
-    public static final String RESULTADO = "Lineas que contienen PSP : ";
+    public static final String RESULTADO = "Lineas que contienen PSP : \n";
 
     public static void main(String[] args) throws Exception {
 
         Process p = lanzarProceso(COMANDO);
         escribir(p, CONTENIDO);
-        leer(p);
+        System.out.println(RESULTADO + leer(p));
         p.waitFor();
 
     }
@@ -31,6 +31,7 @@ public class App {
         return Runtime.getRuntime().exec(comando);
     }
 
+    // Escribir en el OutputStream
     public static void escribir(Process p, String contenido) throws Exception {
         OutputStream out = p.getOutputStream();
         PrintWriter pw = new PrintWriter(new OutputStreamWriter(out));
@@ -38,13 +39,15 @@ public class App {
         pw.close();
     }
 
-    public static void leer(Process p) throws Exception {
+    // Leer el InputStream
+    public static String leer(Process p) throws Exception {
         BufferedReader br = new BufferedReader(new InputStreamReader(p.getInputStream()));
+        StringBuilder sb = new StringBuilder();
         String linea;
-        System.out.println(RESULTADO);
         while ((linea = br.readLine()) != null) {
-            System.out.println(linea);
+            sb.append(linea).append("\n");
         }
         br.close();
+        return sb.toString();
     }
 }
