@@ -15,7 +15,7 @@ public class App {
             y se programa de forma concurrente en PSP
             PSP es programacion.""";
 
-    public static final String[] COMANDO = {"grep", "PSP"};
+    public static final String[] COMANDO = { "grep", "PSP" };
     public static final String RESULTADO = "Lineas que contienen PSP : \n";
     public static final String MSG_ERROR = "A ocurrido un error con el proceso";
 
@@ -23,12 +23,11 @@ public class App {
 
         Process p = lanzarProceso(COMANDO);
         escribir(p, CONTENIDO);
-        if (p.waitFor() != 0){
+        if (p.waitFor() != 0) {
             System.out.println(MSG_ERROR);
-        }
-        else {
+        } else {
             System.out.println(RESULTADO + leer(p));
-        }  
+        }
 
     }
 
@@ -41,7 +40,7 @@ public class App {
         OutputStream out = p.getOutputStream();
         try (PrintWriter pw = new PrintWriter(new OutputStreamWriter(out))) {
             pw.println(contenido);
-        } catch (Exception e){
+        } catch (Exception e) {
             throw e;
         }
     }
@@ -54,8 +53,9 @@ public class App {
             while ((linea = br.readLine()) != null) {
                 sb.append(linea).append("\n");
             }
-            br.close();
             return sb.toString();
+        } catch (Exception e) {
+            throw e;
         }
     }
 }

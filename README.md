@@ -22,18 +22,20 @@ En mi archivo **App.java** tengo tres métodos, más mi método main:
 
 - Método **lanzarProceso** :
     ```java
-        public static Process lanzarProceso(String comando) throws Exception {
+        public static Process lanzarProceso(String[] comando) throws Exception {
             return Runtime.getRuntime().exec(comando);
-        } 
+        }
     ```
 
 - Método **escribir** : 
     ```java
         public static void escribir(Process p, String contenido) throws Exception {
             OutputStream out = p.getOutputStream();
-            PrintWriter pw = new PrintWriter(new OutputStreamWriter(out));
-            pw.println(contenido);
-            pw.close();
+            try (PrintWriter pw = new PrintWriter(new OutputStreamWriter(out))) {
+                pw.println(contenido);
+            } catch (Exception e) {
+                throw e;
+            }
         }
     ```
     > Estariamos escribiendo en el output stream del programa padre.
@@ -41,14 +43,16 @@ En mi archivo **App.java** tengo tres métodos, más mi método main:
 - Método **leer** : 
     ```java
         public static String leer(Process p) throws Exception {
-            BufferedReader br = new BufferedReader(new InputStreamReader(p.getInputStream()));
-            StringBuilder sb = new StringBuilder();
-            String linea;
-            while ((linea = br.readLine()) != null) {
-                sb.append(linea).append("\n");
+            try (BufferedReader br = new BufferedReader(new InputStreamReader(p.getInputStream()))) {
+                StringBuilder sb = new StringBuilder();
+                String linea;
+                while ((linea = br.readLine()) != null) {
+                    sb.append(linea).append("\n");
+                }
+                return sb.toString();
+            } catch (Exception e) {
+                throw e;
             }
-            br.close();
-            return sb.toString();
         }
     ```
     > Estariamos leyendo el inputStream con el programa padre.
@@ -97,7 +101,8 @@ Con JUnit he testeado los métodos en **AppTest.java**.
     ```java
         @Test
         public void testEscribir() throws Exception {
-            Process p = App.lanzarProceso("cat");
+            String[] comando = {"cat"};
+            Process p = App.lanzarProceso(comando);
             App.escribir(p, "Hola");
 
             BufferedReader br = new BufferedReader(new InputStreamReader(p.getInputStream()));
@@ -110,9 +115,10 @@ Con JUnit he testeado los métodos en **AppTest.java**.
     ```java
         @Test
         public void testLeer() throws Exception {
-            Process p = App.lanzarProceso("echo hola buenas");
+            String[] comando = {"echo", "hola buenas"};
+            Process p = App.lanzarProceso(comando);
             assertEquals("hola buenas", App.leer(p).strip());
-        }   
+        } 
     ```
     > Aqui compruebo que lee bien haciendo un echo y comparando los resultados
 
