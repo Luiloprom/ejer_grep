@@ -17,13 +17,18 @@ public class App {
 
     public static final String[] COMANDO = {"grep", "PSP"};
     public static final String RESULTADO = "Lineas que contienen PSP : \n";
+    public static final String MSG_ERROR = "A ocurrido un error con el proceso";
 
     public static void main(String[] args) throws Exception {
 
         Process p = lanzarProceso(COMANDO);
         escribir(p, CONTENIDO);
-        System.out.println(RESULTADO + leer(p));
-        p.waitFor();
+        if (p.waitFor() != 0){
+            System.out.println(MSG_ERROR);
+        }
+        else {
+            System.out.println(RESULTADO + leer(p));
+        }  
 
     }
 
@@ -34,20 +39,23 @@ public class App {
     // Escribir en el OutputStream
     public static void escribir(Process p, String contenido) throws Exception {
         OutputStream out = p.getOutputStream();
-        PrintWriter pw = new PrintWriter(new OutputStreamWriter(out));
-        pw.println(contenido);
-        pw.close();
+        try (PrintWriter pw = new PrintWriter(new OutputStreamWriter(out))) {
+            pw.println(contenido);
+        } catch (Exception e){
+            throw e;
+        }
     }
 
     // Leer el InputStream
     public static String leer(Process p) throws Exception {
-        BufferedReader br = new BufferedReader(new InputStreamReader(p.getInputStream()));
-        StringBuilder sb = new StringBuilder();
-        String linea;
-        while ((linea = br.readLine()) != null) {
-            sb.append(linea).append("\n");
+        try (BufferedReader br = new BufferedReader(new InputStreamReader(p.getInputStream()))) {
+            StringBuilder sb = new StringBuilder();
+            String linea;
+            while ((linea = br.readLine()) != null) {
+                sb.append(linea).append("\n");
+            }
+            br.close();
+            return sb.toString();
         }
-        br.close();
-        return sb.toString();
     }
 }
