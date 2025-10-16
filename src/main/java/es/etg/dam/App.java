@@ -15,7 +15,7 @@ public class App {
             y se programa de forma concurrente en PSP
             PSP es programacion.""";
 
-    public static final String COMANDO = "grep PSP";
+    public static final String[] COMANDO = {"grep", "PSP"};
     public static final String RESULTADO = "Lineas que contienen PSP : \n";
 
     public static void main(String[] args) throws Exception {
@@ -27,7 +27,7 @@ public class App {
 
     }
 
-    public static Process lanzarProceso(String comando) throws Exception {
+    public static Process lanzarProceso(String[] comando) throws Exception {
         return Runtime.getRuntime().exec(comando);
     }
 

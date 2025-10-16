@@ -17,7 +17,8 @@ public class AppTest {
 
     @Test
     public void testEscribir() throws Exception {
-        Process p = App.lanzarProceso("cat");
+        String[] comando = {"cat"};
+        Process p = App.lanzarProceso(comando);
         App.escribir(p, "Hola");
 
         BufferedReader br = new BufferedReader(new InputStreamReader(p.getInputStream()));
@@ -26,7 +27,8 @@ public class AppTest {
 
     @Test
     public void testLeer() throws Exception {
-        Process p = App.lanzarProceso("echo hola buenas");
+        String[] comando = {"echo", "hola buenas"};
+        Process p = App.lanzarProceso(comando);
         assertEquals("hola buenas", App.leer(p).strip());
     }
 
